@@ -15,6 +15,7 @@ vcpkg_extract_source_archive_ex(
     ARCHIVE ${ARCHIVE}
     PATCHES
         fix-libserf.patch
+        fix-libexpat-static.patch
 )
 
 vcpkg_find_acquire_program(PYTHON3)
@@ -28,9 +29,9 @@ else()
 endif()
 
 if(VCPKG_LIBRARY_LINKAGE STREQUAL dynamic)
-  set(BUILD_MODE "--with-shared-serf")
+  set(BUILD_MODE --with-shared-serf)
 else()
-  set(BUILD_MODE "--with-static-apr --with-static-openssl --disable-shared")
+  set(BUILD_MODE --with-static-apr --with-static-openssl --disable-shared)
 endif()
 
 # ### TODO: Maybe add
@@ -59,50 +60,51 @@ vcpkg_build_msbuild(
 )
 
 if (VCPKG_TARGET_IS_WINDOWS)
-    file(GLOB_RECURSE SVN_BIN_rel
-      ${SOURCE_PATH}/Release/subversion/libsvn*.dll
-      ${SOURCE_PATH}/Release/tools/libsvn*.dll)
+    if(VCPKG_LIBRARY_LINKAGE STREQUAL dynamic)
+        file(GLOB_RECURSE SVN_BIN_rel
+            ${SOURCE_PATH}/Release/subversion/libsvn*.dll
+            ${SOURCE_PATH}/Release/tools/libsvn*.dll)
+
+        file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/bin)
+        file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/debug/bin)
+     endif()
 
     file(GLOB_RECURSE SVN_EXE_rel
-      ${SOURCE_PATH}/Release/subversion/svn*.exe
-      ${SOURCE_PATH}/Release/tools/svn*.pdb)
+        ${SOURCE_PATH}/Release/subversion/svn*.exe
+        ${SOURCE_PATH}/Release/tools/svn*.pdb)
 
     file(GLOB_RECURSE SVN_LIBS_rel
-      ${SOURCE_PATH}/Release/subversion/libsvn*.lib)
+        ${SOURCE_PATH}/Release/subversion/libsvn*.lib)
 
     file(GLOB_RECURSE SVN_PDB_rel
-      ${SOURCE_PATH}/Release/subversion/libsvn*.pdb
-      ${SOURCE_PATH}/Release/tools/libsvn*.pdb)
+        ${SOURCE_PATH}/Release/subversion/libsvn*.pdb
+        ${SOURCE_PATH}/Release/tools/libsvn*.pdb)
 
     file(GLOB_RECURSE SVN_BIN_dbg
-      ${SOURCE_PATH}/Debug/subversion/libsvn*.dll
-      ${SOURCE_PATH}/Debug/tools/libsvn*.dll)
+        ${SOURCE_PATH}/Debug/subversion/libsvn*.dll
+        ${SOURCE_PATH}/Debug/tools/libsvn*.dll)
 
     file(GLOB_RECURSE SVN_EXE_dbg
-      ${SOURCE_PATH}/Debug/subversion/svn*.exe
-      ${SOURCE_PATH}/Debug/tools/svn*.pdb)
+        ${SOURCE_PATH}/Debug/subversion/svn*.exe
+        ${SOURCE_PATH}/Debug/tools/svn*.pdb)
 
     file(GLOB_RECURSE SVN_LIBS_dbg
-      ${SOURCE_PATH}/Debug/subversion/libsvn*.lib)
+        ${SOURCE_PATH}/Debug/subversion/libsvn*.lib)
 
     file(GLOB_RECURSE SVN_PDB_dbg
-      ${SOURCE_PATH}/Debug/subversion/libsvn*.pdb
-      ${SOURCE_PATH}/Debug/tools/libsvn*.pdb)
+        ${SOURCE_PATH}/Debug/subversion/libsvn*.pdb
+        ${SOURCE_PATH}/Debug/tools/libsvn*.pdb)
 
     file(GLOB SVN_INCLUDES
       ${SOURCE_PATH}/subversion/include/*.h)
 
     file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/include)
-    file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/bin)
     file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/lib)
-    file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/tools/subversion/bin)
-    file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/debug/bin)
     file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/debug/lib)
+    file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/tools/subversion/bin)
     file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/tools/subversion/debug/bin)
 
     file(COPY ${SVN_INCLUDES} DESTINATION ${CURRENT_PACKAGES_DIR}/include)
-    file(COPY ${SVN_BIN_rel} DESTINATION ${CURRENT_PACKAGES_DIR}/bin)
-    file(COPY ${SVN_BIN_dbg} DESTINATION ${CURRENT_PACKAGES_DIR}/debug/bin)
 
     file(COPY ${SVN_LIBS_rel} DESTINATION ${CURRENT_PACKAGES_DIR}/lib)
     file(COPY ${SVN_LIBS_dbg} DESTINATION ${CURRENT_PACKAGES_DIR}/debug/lib)
@@ -113,6 +115,9 @@ if (VCPKG_TARGET_IS_WINDOWS)
     file(COPY ${SOURCE_PATH}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/subversion/copyright)
 
     if(VCPKG_LIBRARY_LINKAGE STREQUAL dynamic)
+        file(COPY ${SVN_BIN_rel} DESTINATION ${CURRENT_PACKAGES_DIR}/bin)
+        file(COPY ${SVN_BIN_dbg} DESTINATION ${CURRENT_PACKAGES_DIR}/debug/bin)
+
         file(COPY ${SVN_PDB_rel} DESTINATION ${CURRENT_PACKAGES_DIR}/bin)
         file(COPY ${SVN_PDB_dbg} DESTINATION ${CURRENT_PACKAGES_DIR}/debug/bin)
     else()
