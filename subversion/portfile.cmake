@@ -61,3 +61,67 @@ vcpkg_build_msbuild(
     PLATFORM ${MSBUILD_PLATFORM}
     USE_VCPKG_INTEGRATION
 )
+
+if (VCPKG_TARGET_IS_WINDOWS)
+    file(GLOB_RECURSE SVN_BIN_rel
+      ${SOURCE_PATH}/Release/subversion/libsvn*.dll
+      ${SOURCE_PATH}/Release/tools/libsvn*.dll)
+
+    file(GLOB_RECURSE SVN_EXE_rel
+      ${SOURCE_PATH}/Release/subversion/svn*.exe
+      ${SOURCE_PATH}/Release/tools/svn*.pdb)
+
+    file(GLOB_RECURSE SVN_LIBS_rel
+      ${SOURCE_PATH}/Release/subversion/libsvn*.lib)
+
+    file(GLOB_RECURSE SVN_PDB_rel
+      ${SOURCE_PATH}/Release/subversion/libsvn*.pdb
+      ${SOURCE_PATH}/Release/tools/libsvn*.pdb)
+
+    file(GLOB_RECURSE SVN_BIN_dbg
+      ${SOURCE_PATH}/Debug/subversion/libsvn*.dll
+      ${SOURCE_PATH}/Debug/tools/libsvn*.dll)
+
+    file(GLOB_RECURSE SVN_EXE_dbg
+      ${SOURCE_PATH}/Debug/subversion/svn*.exe
+      ${SOURCE_PATH}/Debug/tools/svn*.pdb)
+
+    file(GLOB_RECURSE SVN_LIBS_dbg
+      ${SOURCE_PATH}/Debug/subversion/libsvn*.lib)
+
+    file(GLOB_RECURSE SVN_PDB_dbg
+      ${SOURCE_PATH}/Debug/subversion/libsvn*.pdb
+      ${SOURCE_PATH}/Debug/tools/libsvn*.pdb)
+
+    file(GLOB SVN_INCLUDES
+      ${SOURCE_PATH}/subversion/include/*.h)
+
+    file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/include)
+    file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/bin)
+    file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/lib)
+    file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/tools/subversion/bin)
+    file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/debug/bin)
+    file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/debug/lib)
+    file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/tools/subversion/debug/bin)
+
+    file(COPY ${SVN_INCLUDES} DESTINATION ${CURRENT_PACKAGES_DIR}/include)
+    file(COPY ${SVN_BIN_rel} DESTINATION ${CURRENT_PACKAGES_DIR}/bin)
+    file(COPY ${SVN_BIN_dbg} DESTINATION ${CURRENT_PACKAGES_DIR}/debug/bin)
+
+    file(COPY ${SVN_LIBS_rel} DESTINATION ${CURRENT_PACKAGES_DIR}/lib)
+    file(COPY ${SVN_LIBS_dbg} DESTINATION ${CURRENT_PACKAGES_DIR}/debug/lib)
+
+    file(COPY ${SVN_EXE_rel} DESTINATION ${CURRENT_PACKAGES_DIR}/tools/subversion/bin)
+    file(COPY ${SVN_EXE_dbg} DESTINATION ${CURRENT_PACKAGES_DIR}/tools/subversion/debug/bin)
+
+    file(COPY ${SOURCE_PATH}/LICENSE ${CURRENT_PACKAGES_DIR}/share/subversion/copyright)
+
+    if(VCPKG_LIBRARY_LINKAGE STREQUAL dynamic)
+        file(COPY ${SVN_PDB_rel} DESTINATION ${CURRENT_PACKAGES_DIR}/bin)
+        file(COPY ${SVN_PDB_dbg} DESTINATION ${CURRENT_PACKAGES_DIR}/debug/bin)
+    else()
+        file(COPY ${SVN_PDB_rel} DESTINATION ${CURRENT_PACKAGES_DIR}/lib)
+        file(COPY ${SVN_PDB_dbg} DESTINATION ${CURRENT_PACKAGES_DIR}/debug/lib)
+    endif()
+
+endif()
