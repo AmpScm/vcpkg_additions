@@ -26,16 +26,16 @@ jobs:
       with:
         vcpkgDirectory: '${{ github.workspace }}/vcpkg'
         vcpkgGitCommitId: 4278a5f9eafbdadfaa65d7aafd914964841cba42
-        vcpkgArguments: apr-util:x86-windows apr-util:x86-windows-static-md apr-util:x64-windows apr-util:x64-windows-static-md
+        vcpkgArguments: apr-util:x86-windows apr-util:x86-windows-static-md apr-util:x86-windows-static apr-util:x64-windows apr-util:x64-windows-static-md apr-util:x64-windows-static
 
     - name: Build serf
       run: |
-        ${{env.VCPKG_ROOT}}/vcpkg install --overlay-ports=${{env.buildDir}} serf:x86-windows serf:x86-windows-static-md serf:x64-windows serf:x64-windows-static-md
+        ${{env.VCPKG_ROOT}}/vcpkg install --overlay-ports=${{env.buildDir}}/ports serf:x86-windows serf:x86-windows-static-md serf:x64-windows serf:x64-windows-static-md serf:x64-windows-static
 
     - name: Build proj4
       run: |
-        ${{env.VCPKG_ROOT}}/vcpkg install --overlay-ports=${{env.buildDir}} proj4:x86-windows proj4:x86-windows-static-md proj4:x64-windows proj4:x64-windows-static-md
+        ${{env.VCPKG_ROOT}}/vcpkg install --overlay-ports=${{env.buildDir}}/ports proj4:x86-windows proj4:x86-windows-static-md proj4:x64-windows proj4:x64-windows-static-md proj4:x64-windows-static
 
     - name: Build subversion
       run: |
-        ${{env.VCPKG_ROOT}}/vcpkg install --overlay-ports=${{env.buildDir}} subversion:x86-windows subversion:x86-windows-static-md subversion:x64-windows subversion:x64-windows-static-md
+        ${{env.VCPKG_ROOT}}/vcpkg install --overlay-ports=${{env.buildDir}}/ports subversion:x86-windows subversion:x86-windows-static-md subversion:x64-windows subversion:x64-windows-static-md subversion:x64-windows-static

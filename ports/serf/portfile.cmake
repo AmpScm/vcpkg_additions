@@ -41,19 +41,46 @@ else()
   set(SCONS_ARCH "")
 endif()
 
-if(VCPKG_LIBRARY_LINKAGE STREQUAL dynamic)
-  set(APR_MODE "")
-else()
-  set(APR_MODE "APR_STATIC=yes")
+set(EXTRA_MODE "")
+if(VCPKG_LIBRARY_LINKAGE STREQUAL static)
+  set(EXTRA_MODE ${EXTRA_MODE} APR_STATIC=yes)
+endif()
+
+if(VCPKG_CRT_LINKAGE STREQUAL static)
+  set(EXTRA_MODE ${EXTRA_MODE} STATIC_CRT=yes)
 endif()
 
 vcpkg_execute_build_process(
-    COMMAND ${PYTHON3} ${SCONS_PATH}/scons.py PREFIX=${CURRENT_PACKAGES_DIR} LIBDIR=${CURRENT_PACKAGES_DIR}/lib OPENSSL=${CURRENT_INSTALLED_DIR} ZLIB=${CURRENT_INSTALLED_DIR} APR=${CURRENT_INSTALLED_DIR} APU=${CURRENT_INSTALLED_DIR} SOURCE_LAYOUT=no ${APR_MODE} ${SCONS_ARCH} install-lib install-inc
+    COMMAND ${PYTHON3}
+        ${SCONS_PATH}/scons.py
+            PREFIX=${CURRENT_PACKAGES_DIR}
+            LIBDIR=${CURRENT_PACKAGES_DIR}/lib
+            OPENSSL=${CURRENT_INSTALLED_DIR}
+            ZLIB=${CURRENT_INSTALLED_DIR}
+            APR=${CURRENT_INSTALLED_DIR}
+            APU=${CURRENT_INSTALLED_DIR}
+            SOURCE_LAYOUT=no
+            ${EXTRA_MODE}
+            ${SCONS_ARCH}
+            DEBUG=no
+            install-lib install-inc
     WORKING_DIRECTORY ${SOURCE_PATH}
 )
 
 vcpkg_execute_build_process(
-    COMMAND ${PYTHON3} ${SCONS_PATH}/scons.py PREFIX=${CURRENT_PACKAGES_DIR}/debug LIBDIR=${CURRENT_PACKAGES_DIR}/debug/lib OPENSSL=${CURRENT_INSTALLED_DIR} ZLIB=${CURRENT_INSTALLED_DIR} APR=${CURRENT_INSTALLED_DIR} APU=${CURRENT_INSTALLED_DIR} SOURCE_LAYOUT=no ${APR_MODE} ${SCONS_ARCH} DEBUG=yes install-lib install-inc
+    COMMAND ${PYTHON3}
+        ${SCONS_PATH}/scons.py
+            PREFIX=${CURRENT_PACKAGES_DIR}/debug
+            LIBDIR=${CURRENT_PACKAGES_DIR}/debug/lib
+            OPENSSL=${CURRENT_INSTALLED_DIR}
+            ZLIB=${CURRENT_INSTALLED_DIR}
+            APR=${CURRENT_INSTALLED_DIR}
+            APU=${CURRENT_INSTALLED_DIR}
+            SOURCE_LAYOUT=no
+            ${EXTRA_MODE}
+            ${SCONS_ARCH}
+            DEBUG=yes
+            install-lib install-inc
     WORKING_DIRECTORY ${SOURCE_PATH}
 )
 
