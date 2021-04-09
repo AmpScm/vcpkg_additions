@@ -13,10 +13,6 @@ vcpkg_download_distfile(ARCHIVE
 vcpkg_extract_source_archive_ex(
     OUT_SOURCE_PATH SOURCE_PATH
     ARCHIVE ${ARCHIVE}
-)
-
-vcpkg_apply_patches(
-    SOURCE_PATH ${SOURCE_PATH}
     PATCHES
         fix-libserf.patch
 )
@@ -114,7 +110,7 @@ if (VCPKG_TARGET_IS_WINDOWS)
     file(COPY ${SVN_EXE_rel} DESTINATION ${CURRENT_PACKAGES_DIR}/tools/subversion/bin)
     file(COPY ${SVN_EXE_dbg} DESTINATION ${CURRENT_PACKAGES_DIR}/tools/subversion/debug/bin)
 
-    file(COPY ${SOURCE_PATH}/LICENSE ${CURRENT_PACKAGES_DIR}/share/subversion/copyright)
+    file(COPY ${SOURCE_PATH}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/subversion/copyright)
 
     if(VCPKG_LIBRARY_LINKAGE STREQUAL dynamic)
         file(COPY ${SVN_PDB_rel} DESTINATION ${CURRENT_PACKAGES_DIR}/bin)
