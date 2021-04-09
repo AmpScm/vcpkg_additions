@@ -37,7 +37,46 @@ vcpkg_extract_source_archive_ex(
 
 vcpkg_find_acquire_program(PYTHON3)
 
+if(VCPKG_TARGET_ARCHITECTURE STREQUAL x64)
+  set(SCONS_ARCH "TARGET_ARCH=x86_64")
+elseif(VCPKG_TARGET_ARCHITECTURE STREQUAL x86)
+  set(SCONS_ARCH "TARGET_ARCH=x86")
+else()
+  set(SCONS_ARCH "")
+endif()
+
 vcpkg_execute_build_process(
-    COMMAND ${PYTHON3} ${SCONS_PATH}/scons.py PREFIX=install LIBDIR=install/lib OPENSSL=${CURRENT_INSTALLED_DIR} ZLIB=${CURRENT_INSTALLED_DIR} APR=${CURRENT_INSTALLED_DIR} APU=${CURRENT_INSTALLED_DIR} SOURCE_LAYOUT=no APR_STATIC=yes install-lib install-inc
+    COMMAND ${PYTHON3} ${SCONS_PATH}/scons.py PREFIX=${CURRENT_PACKAGES_DIR} LIBDIR=${CURRENT_PACKAGES_DIR}/lib OPENSSL=${CURRENT_INSTALLED_DIR} ZLIB=${CURRENT_INSTALLED_DIR} APR=${CURRENT_INSTALLED_DIR} APU=${CURRENT_INSTALLED_DIR} SOURCE_LAYOUT=no APR_STATIC=yes ${SCONS_ARCH} install-lib install-inc
     WORKING_DIRECTORY ${SOURCE_PATH}
 )
+
+vcpkg_execute_build_process(
+    COMMAND ${PYTHON3} ${SCONS_PATH}/scons.py PREFIX=${CURRENT_PACKAGES_DIR}/debug LIBDIR=${CURRENT_PACKAGES_DIR}/debug/lib OPENSSL=${CURRENT_INSTALLED_DIR} ZLIB=${CURRENT_INSTALLED_DIR} APR=${CURRENT_INSTALLED_DIR} APU=${CURRENT_INSTALLED_DIR} SOURCE_LAYOUT=no APR_STATIC=yes ${SCONS_ARCH} DEBUG=yes install-lib install-inc
+    WORKING_DIRECTORY ${SOURCE_PATH}
+)
+
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
+configure_file("${SOURCE_PATH}/LICENSE" "${CURRENT_PACKAGES_DIR}/share/serf/copyright" COPYONLY)
+
+
+if (VCPKG_TARGET_IS_WINDOWS)
+    # Both dynamic and static are built, so keep only the one needed
+    if(VCPKG_LIBRARY_LINKAGE STREQUAL dynamic)
+        file(REMOVE ${CURRENT_PACKAGES_DIR}/lib/serf-1.lib
+                    ${CURRENT_PACKAGES_DIR}/debug/lib/serf-1.lib)
+        file(RENAME ${CURRENT_PACKAGES_DIR}/lib/libserf-1.dll ${CURRENT_PACKAGES_DIR}/bin/libserf-1.dll)
+        file(RENAME ${CURRENT_PACKAGES_DIR}/debug/lib/libserf-1.dll ${CURRENT_PACKAGES_DIR}/debug/bin/libserf-1.dll)
+    else()
+        file(REMOVE ${CURRENT_PACKAGES_DIR}/lib/libserf-1.lib
+                    ${CURRENT_PACKAGES_DIR}/lib/libserf-1.exp
+                    ${CURRENT_PACKAGES_DIR}/lib/libserf-1.dll
+                    ${CURRENT_PACKAGES_DIR}/lib/libserf-1.pdb
+                    ${CURRENT_PACKAGES_DIR}/debug/lib/libserf-1.lib
+                    ${CURRENT_PACKAGES_DIR}/debug/lib/libserf-1.exp
+                    ${CURRENT_PACKAGES_DIR}/debug/lib/libserf-1.dll
+                    ${CURRENT_PACKAGES_DIR}/debug/lib/libserf-1.pdb)
+        file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/bin ${CURRENT_PACKAGES_DIR}/debug/bin)
+    endif()
+else()
+    # TODO: Build similar as on Windows
+endif()

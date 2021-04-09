@@ -5,6 +5,7 @@
   "homepage": "https://serf.apache.org",
   "dependencies": [
     "apr",
+    "apr-util",
     "openssl",
     "zlib"
   ]
