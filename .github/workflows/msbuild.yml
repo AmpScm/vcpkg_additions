@@ -1,0 +1,37 @@
+name: SharpProj
+
+on:
+  push:
+    branches: [ main, stable/* ]
+  pull_request:
+    branches: [ main, stable/* ]
+
+env:
+  # Path to the solution file relative to the root of the project.
+  SOLUTION_FILE_PATH: dev/src/SharpProj.sln
+  buildDir: '${{ github.workspace }}/dev'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Git Checkout
+      uses: actions/checkout@v2
+      with:
+        path: dev
+
+    - name: Build proj via VCPKG
+      uses: lukka/run-vcpkg@v7
+      with:
+        vcpkgGitCommitId: 4278a5f9eafbdadfaa65d7aafd914964841cba42
+        vcpkgArguments: install apr-util:x86-windows apr-util:x86-windows-static-md apr-util:x64-windows apr-util:x64-windows-static-md
+
+    - name: Build serf
+      run: |
+        $VCPKG_ROOT/vcpkg install --overlay-ports=${{env.buildDir}} serf:x86-windows serf:x86-windows-static-md serf:x64-windows serf:x64-windows-static-md
+
+
+    - name: Build subversion
+      run: |
+        $VCPKG_ROOT/vcpkg install --overlay-ports=${{env.buildDir}} subversion:x86-windows subversion:x86-windows-static-md subversion:x64-windows subversion:x64-windows-static-md
