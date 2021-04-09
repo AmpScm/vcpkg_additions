@@ -30,12 +30,12 @@ jobs:
 
     - name: Build serf
       run: |
-        $VCPKG_ROOT/vcpkg install --overlay-ports=${{env.buildDir}} serf:x86-windows serf:x86-windows-static-md serf:x64-windows serf:x64-windows-static-md
+        ${{env.VCPKG_ROOT}}/vcpkg install --overlay-ports=${{env.buildDir}} serf:x86-windows serf:x86-windows-static-md serf:x64-windows serf:x64-windows-static-md
 
     - name: Build proj4
       run: |
-        $VCPKG_ROOT/vcpkg install --overlay-ports=${{env.buildDir}} proj4:x86-windows proj4:x86-windows-static-md proj4:x64-windows proj4:x64-windows-static-md
+        ${{env.VCPKG_ROOT}}/vcpkg install --overlay-ports=${{env.buildDir}} proj4:x86-windows proj4:x86-windows-static-md proj4:x64-windows proj4:x64-windows-static-md
 
     - name: Build subversion
       run: |
-        $VCPKG_ROOT/vcpkg install --overlay-ports=${{env.buildDir}} subversion:x86-windows subversion:x86-windows-static-md subversion:x64-windows subversion:x64-windows-static-md
+        ${{env.VCPKG_ROOT}}/vcpkg install --overlay-ports=${{env.buildDir}} subversion:x86-windows subversion:x86-windows-static-md subversion:x64-windows subversion:x64-windows-static-md

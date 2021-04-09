@@ -74,7 +74,9 @@ if (VCPKG_TARGET_IS_WINDOWS)
         file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/bin)
         file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/debug/bin)
         file(RENAME ${CURRENT_PACKAGES_DIR}/lib/libserf-1.dll ${CURRENT_PACKAGES_DIR}/bin/libserf-1.dll)
+        file(RENAME ${CURRENT_PACKAGES_DIR}/lib/libserf-1.pdb ${CURRENT_PACKAGES_DIR}/bin/libserf-1.pdb)
         file(RENAME ${CURRENT_PACKAGES_DIR}/debug/lib/libserf-1.dll ${CURRENT_PACKAGES_DIR}/debug/bin/libserf-1.dll)
+        file(RENAME ${CURRENT_PACKAGES_DIR}/debug/lib/libserf-1.pdb ${CURRENT_PACKAGES_DIR}/debug/bin/libserf-1.pdb)
     else()
         file(REMOVE ${CURRENT_PACKAGES_DIR}/lib/libserf-1.lib
                     ${CURRENT_PACKAGES_DIR}/lib/libserf-1.exp
